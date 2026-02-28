@@ -162,18 +162,9 @@ Sé conciso, claro y práctico. Proporciona ejemplos de código cuando sea relev
     isLoading = true;
 
     try {
-      const apiKey = store.get('sai_api_key');
-
-      let responseText;
-
-      if (apiKey) {
-        // Real API call
-        responseText = await callAnthropicAPI(apiKey, messages, SYSTEM_PROMPTS[modelId]);
-      } else {
-        // Demo mode fallback
-        responseText = await demoResponse(text, modelId);
-      }
-
+    
+    let responseText = await callAnthropicAPI(null, messages, SYSTEM_PROMPTS[modelId]);
+    
       // Spend credits
       Credits.spend(cost, user.email);
 
@@ -188,6 +179,7 @@ Sé conciso, claro y práctico. Proporciona ejemplos de código cuando sea relev
 
     } catch (err) {
       typingEl.remove();
+      console.error('Error completo:', err);
       appendMessage('ai', '❌ Error al conectar con la IA. Verifica tu API Key en la configuración.');
       console.error(err);
     }
@@ -197,14 +189,11 @@ Sé conciso, claro y práctico. Proporciona ejemplos de código cuando sea relev
   }
 
   // ── Anthropic API ────────────────────────────────────────
-  async function callAnthropicAPI(apiKey, msgs, systemPrompt) {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
+async function callAnthropicAPI(apiKey, msgs, systemPrompt) {
+    const response = await fetch('/.netlify/functions/chat', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-allow-browser': 'true'
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
@@ -222,7 +211,7 @@ Sé conciso, claro y práctico. Proporciona ejemplos de código cuando sea relev
     }
 
     return data.content?.[0]?.text || 'Sin respuesta.';
-  }
+}
 
   // ── Demo responses (no API key) ───────────────────────────
   async function demoResponse(userText, model) {
