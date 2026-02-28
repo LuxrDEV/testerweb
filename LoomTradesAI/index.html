@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StudioAI — Iniciar Sesión</title>
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/auth.css">
+</head>
+<body>
+
+<div class="auth-layout">
+
+  <!-- ═══ Left decorative panel ═══ -->
+  <aside class="auth-panel">
+    <div class="logo">
+      <div class="logo-mark">
+        <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+      </div>
+      <span class="logo-text">Studio<span>AI</span></span>
+    </div>
+
+    <div class="auth-panel-content">
+      <h2 class="auth-panel-title">
+        Construye juegos<br>increíbles con<br><span>IA a tu lado</span>
+      </h2>
+      <p class="auth-panel-desc">
+        Asistentes de inteligencia artificial especializados para Roblox Studio, código, debug y mucho más.
+      </p>
+
+      <div class="auth-features">
+        <div class="auth-feature">
+          <div class="auth-feature-icon">🎮</div>
+          <span>IA especializada en Roblox Studio y Lua/Luau</span>
+        </div>
+        <div class="auth-feature">
+          <div class="auth-feature-icon">⚡</div>
+          <span>Respuestas rápidas con Claude de Anthropic</span>
+        </div>
+        <div class="auth-feature">
+          <div class="auth-feature-icon">💰</div>
+          <span>Sistema de créditos — paga solo lo que usas</span>
+        </div>
+        <div class="auth-feature">
+          <div class="auth-feature-icon">🔒</div>
+          <span>Tu código y chats son privados y seguros</span>
+        </div>
+      </div>
+    </div>
+
+    <p class="auth-panel-footer">© 2025 StudioAI · Hecho con ❤️ para devs de Roblox</p>
+  </aside>
+
+  <!-- ═══ Right form panel ═══ -->
+  <main class="auth-form-wrapper">
+    <div class="auth-form-box">
+
+      <!-- Mobile logo -->
+      <div class="logo" style="margin-bottom:28px;display:none" id="mobile-logo">
+        <div class="logo-mark">
+          <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        </div>
+        <span class="logo-text">Studio<span style="color:var(--accent)">AI</span></span>
+      </div>
+
+      <!-- Tabs -->
+      <div style="display:flex;gap:4px;background:var(--surface-2);padding:4px;border-radius:var(--radius);margin-bottom:28px">
+        <button class="auth-tab active" data-tab="login"
+          style="flex:1;padding:8px;border-radius:6px;font-size:14px;font-weight:500;color:var(--text-2);transition:all 0.18s ease;background:transparent;border:none;cursor:pointer">
+          Iniciar Sesión
+        </button>
+        <button class="auth-tab" data-tab="register"
+          style="flex:1;padding:8px;border-radius:6px;font-size:14px;font-weight:500;color:var(--text-2);transition:all 0.18s ease;background:transparent;border:none;cursor:pointer">
+          Crear Cuenta
+        </button>
+      </div>
+
+      <!-- ───── LOGIN FORM ───── -->
+      <div id="login-form">
+        <div class="auth-form-header">
+          <h1>Bienvenido de nuevo</h1>
+          <p>Ingresa tus datos para continuar</p>
+        </div>
+
+        <form class="auth-form" onsubmit="return false">
+          <!-- Google -->
+          <button type="button" class="btn-google">
+            <svg viewBox="0 0 48 48" width="18" height="18">
+              <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+              <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+              <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+              <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+            </svg>
+            Continuar con Google
+          </button>
+
+          <div class="divider">o</div>
+
+          <div class="input-group">
+            <label for="login-email">Email</label>
+            <input class="input-field" type="email" id="login-email" placeholder="tu@email.com" autocomplete="email">
+            <span class="field-error" id="login-email-err"></span>
+          </div>
+
+          <div class="input-group">
+            <label for="login-password" style="display:flex;align-items:center;justify-content:space-between">
+              Contraseña
+              <a href="#" class="forgot-link">¿Olvidaste tu contraseña?</a>
+            </label>
+            <div style="position:relative">
+              <input class="input-field" type="password" id="login-password" placeholder="••••••••" autocomplete="current-password" style="padding-right:40px">
+              <button type="button" class="toggle-password" data-for="login-password"
+                style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:16px;color:var(--text-3)">👁</button>
+            </div>
+            <span class="field-error" id="login-password-err"></span>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-full btn-lg" id="login-btn">
+            Iniciar Sesión
+          </button>
+        </form>
+
+        <p class="auth-footer-link">
+          ¿No tienes cuenta?
+          <a href="#" id="go-register">Crear cuenta gratis</a>
+        </p>
+      </div>
+
+      <!-- ───── REGISTER FORM ───── -->
+      <div id="register-form" class="hidden">
+        <div class="auth-form-header">
+          <h1>Crea tu cuenta</h1>
+          <p>Empieza con <strong>100 créditos gratis</strong></p>
+        </div>
+
+        <form class="auth-form" onsubmit="return false">
+          <!-- Google -->
+          <button type="button" class="btn-google">
+            <svg viewBox="0 0 48 48" width="18" height="18">
+              <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+              <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+              <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+              <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+            </svg>
+            Registrarse con Google
+          </button>
+
+          <div class="divider">o</div>
+
+          <div class="input-group">
+            <label for="reg-name">Nombre</label>
+            <input class="input-field" type="text" id="reg-name" placeholder="Tu nombre" autocomplete="name">
+            <span class="field-error" id="reg-name-err"></span>
+          </div>
+
+          <div class="input-group">
+            <label for="reg-email">Email</label>
+            <input class="input-field" type="email" id="reg-email" placeholder="tu@email.com" autocomplete="email">
+            <span class="field-error" id="reg-email-err"></span>
+          </div>
+
+          <div class="form-row">
+            <div class="input-group">
+              <label for="reg-password">Contraseña</label>
+              <div style="position:relative">
+                <input class="input-field" type="password" id="reg-password" placeholder="••••••••" style="padding-right:36px">
+                <button type="button" class="toggle-password" data-for="reg-password"
+                  style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:14px;color:var(--text-3)">👁</button>
+              </div>
+              <span class="field-error" id="reg-password-err"></span>
+            </div>
+            <div class="input-group">
+              <label for="reg-confirm">Confirmar</label>
+              <input class="input-field" type="password" id="reg-confirm" placeholder="••••••••">
+              <span class="field-error" id="reg-confirm-err"></span>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-full btn-lg" id="register-btn">
+            Crear Cuenta Gratis
+          </button>
+
+          <p class="terms-note">Al registrarte aceptas nuestros <a href="#">Términos de Servicio</a> y <a href="#">Política de Privacidad</a></p>
+        </form>
+
+        <p class="auth-footer-link">
+          ¿Ya tienes cuenta?
+          <a href="#" id="go-login">Iniciar sesión</a>
+        </p>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<!-- Tab active style injection -->
+<style>
+  .auth-tab.active {
+    background: var(--surface) !important;
+    color: var(--text) !important;
+    font-weight: 600 !important;
+    box-shadow: var(--shadow-sm);
+  }
+</style>
+
+<script src="js/app.js"></script>
+<script src="js/auth.js"></script>
+</body>
+</html>
