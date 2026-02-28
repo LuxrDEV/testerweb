@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StudioAI — Dashboard</title>
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+
+<div class="app-layout">
+
+  <!-- ═══ Sidebar ═══ -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">
+        <div class="logo-mark">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+          </svg>
+        </div>
+        <span class="logo-text">Studio<span>AI</span></span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <span class="nav-section-label">Principal</span>
+
+      <a class="nav-item active" href="dashboard.html">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Dashboard
+      </a>
+
+      <a class="nav-item" href="chat.html?model=roblox-ai">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Conversaciones
+      </a>
+
+      <a class="nav-item" href="#" id="topup-nav-btn">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+        Recargar créditos
+      </a>
+
+      <span class="nav-section-label" style="margin-top:8px">IAs Disponibles</span>
+
+      <a class="nav-item" href="chat.html?model=roblox-ai">
+        <span style="font-size:15px">🎮</span>
+        Roblox Studio AI
+        <span class="nav-badge">NEW</span>
+      </a>
+
+      <a class="nav-item" href="chat.html?model=code-ai">
+        <span style="font-size:15px">⌨️</span>
+        Code AI
+      </a>
+
+      <a class="nav-item" href="chat.html?model=debug-ai">
+        <span style="font-size:15px">🐛</span>
+        Debug AI
+      </a>
+
+      <a class="nav-item" href="chat.html?model=general-ai">
+        <span style="font-size:15px">🤖</span>
+        General AI
+      </a>
+
+      <div class="nav-spacer"></div>
+
+      <a class="nav-item" href="#" id="logout-btn">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Cerrar Sesión
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-credits">
+        <span class="sidebar-credits-label">💰 Créditos</span>
+        <span class="sidebar-credits-val" data-credits-balance>—</span>
+      </div>
+      <div class="user-card">
+        <div class="user-avatar" data-user-avatar>U</div>
+        <div class="user-card-info">
+          <div class="user-card-name" data-user-name>Usuario</div>
+          <div class="user-card-plan" data-user-email>Plan Gratuito</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ═══ Main Content ═══ -->
+  <main class="main-content">
+    <div class="main-inner">
+
+      <!-- ── Page header ── -->
+      <div class="page-header">
+        <h1>Bienvenido, <span data-user-name style="color:var(--accent)">Cargando...</span> 👋</h1>
+        <p>Elige un asistente de IA y empieza a construir</p>
+      </div>
+
+      <!-- ── Credits banner ── -->
+      <div class="credits-banner" id="credits-banner">
+        <div class="credits-banner-left">
+          <h3>Tus créditos disponibles</h3>
+          <p>Cada mensaje de IA consume créditos según el modelo. Recarga cuando quieras.</p>
+        </div>
+        <div class="credits-banner-right">
+          <div>
+            <div class="credits-big-num" data-credits-balance>—</div>
+            <div class="credits-big-label">créditos</div>
+          </div>
+          <button class="btn btn-secondary topup-btn">+ Recargar</button>
+        </div>
+      </div>
+
+      <!-- ── AI Cards ── -->
+      <h2 class="section-title" style="margin-bottom:16px">Asistentes de IA</h2>
+
+      <div class="ai-grid">
+
+        <!-- Roblox Studio AI — FEATURED -->
+        <div class="ai-card featured" onclick="window.location.href='chat.html?model=roblox-ai'">
+          <div class="ai-card-icon orange">🎮</div>
+          <div class="ai-card-name">Roblox Studio AI</div>
+          <div class="ai-card-desc">
+            Especialista en Lua/Luau, scripts de juego, DataStoreService, GUIs, RemoteEvents y toda la API de Roblox.
+          </div>
+          <div class="ai-card-meta">
+            <span class="ai-card-cost">💰 <span>3</span> créditos/msg</span>
+            <div class="ai-card-tags">
+              <span class="tag" style="background:var(--accent-bg);color:var(--accent)">Destacado</span>
+              <span class="tag">Lua</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Code AI -->
+        <div class="ai-card" onclick="window.location.href='chat.html?model=code-ai'">
+          <div class="ai-card-icon blue">⌨️</div>
+          <div class="ai-card-name">Code AI</div>
+          <div class="ai-card-desc">
+            Asistente de programación multi-lenguaje. JavaScript, Python, TypeScript, C#, Lua y más.
+          </div>
+          <div class="ai-card-meta">
+            <span class="ai-card-cost">💰 <span>2</span> créditos/msg</span>
+            <div class="ai-card-tags"><span class="tag">JS</span><span class="tag">Python</span></div>
+          </div>
+        </div>
+
+        <!-- Debug AI -->
+        <div class="ai-card" onclick="window.location.href='chat.html?model=debug-ai'">
+          <div class="ai-card-icon rose">🐛</div>
+          <div class="ai-card-name">Debug AI</div>
+          <div class="ai-card-desc">
+            Analiza tu código, detecta errores y explica cómo corregirlos. Ideal para bugs difíciles.
+          </div>
+          <div class="ai-card-meta">
+            <span class="ai-card-cost">💰 <span>2</span> créditos/msg</span>
+            <div class="ai-card-tags"><span class="tag">Debug</span></div>
+          </div>
+        </div>
+
+        <!-- General AI -->
+        <div class="ai-card" onclick="window.location.href='chat.html?model=general-ai'">
+          <div class="ai-card-icon purple">🤖</div>
+          <div class="ai-card-name">General AI</div>
+          <div class="ai-card-desc">
+            Asistente de propósito general. Preguntas, redacción, análisis, ideas y mucho más.
+          </div>
+          <div class="ai-card-meta">
+            <span class="ai-card-cost">💰 <span>2</span> créditos/msg</span>
+            <div class="ai-card-tags"><span class="tag">General</span></div>
+          </div>
+        </div>
+
+        <!-- Image AI — Coming Soon -->
+        <div class="ai-card" style="opacity:0.55;pointer-events:none">
+          <div class="ai-card-icon green">🖼️</div>
+          <div class="ai-card-name">Image AI <span style="font-size:11px;color:var(--text-3);font-weight:400">· Próximamente</span></div>
+          <div class="ai-card-desc">
+            Genera imágenes e iconos para tu juego de Roblox con IA. ¡Muy pronto!
+          </div>
+          <div class="ai-card-meta">
+            <span class="ai-card-cost">💰 <span>8</span> créditos/img</span>
+            <div class="ai-card-tags"><span class="tag">Beta</span></div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ── Recent Conversations ── -->
+      <h2 class="section-title">
+        Conversaciones recientes
+        <a href="chat.html?model=roblox-ai">Ver todas →</a>
+      </h2>
+      <div class="recent-list" id="recent-list">
+        <div style="padding:20px;text-align:center;color:var(--text-3);font-size:14px">
+          Aún no hay conversaciones. ¡Inicia un chat!
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="js/app.js"></script>
+<script src="js/credits.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const { requireAuth, store, toast, populateUserUI, timeAgo } = window.SAI;
+  const Credits = window.Credits;
+
+  const user = requireAuth();
+  if (!user) return;
+
+  populateUserUI(user);
+
+  // Update credits
+  function updateCredits() {
+    const bal = Credits.getBalance(user.email);
+    document.querySelectorAll('[data-credits-balance]').forEach(el => el.textContent = bal);
+  }
+  updateCredits();
+  document.addEventListener('credits-updated', ({ detail }) => {
+    document.querySelectorAll('[data-credits-balance]').forEach(el => el.textContent = detail.balance);
+  });
+
+  // Load recent chats
+  const recentList = document.getElementById('recent-list');
+  const all = store.get('sai_chats', {});
+  const recents = Object.values(all)
+    .sort((a,b) => new Date(b.updatedAt) - new Date(a.updatedAt))
+    .slice(0, 5);
+
+  if (recents.length > 0) {
+    const icons = { 'roblox-ai':'🎮', 'code-ai':'⌨️', 'debug-ai':'🐛', 'general-ai':'🤖' };
+    recentList.innerHTML = recents.map(c => `
+      <div class="recent-item" onclick="window.location.href='chat.html?model=${c.model}&chat=${c.id}'">
+        <span class="recent-icon">${icons[c.model] || '🤖'}</span>
+        <div class="recent-info">
+          <div class="recent-title">${c.title}</div>
+          <div class="recent-meta">
+            <span>${c.model}</span>
+            <span class="dot"></span>
+            <span>${timeAgo(c.updatedAt)}</span>
+          </div>
+        </div>
+        <span class="recent-arrow">→</span>
+      </div>
+    `).join('');
+  }
+
+  // Logout
+  document.getElementById('logout-btn')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    store.remove('sai_user');
+    window.location.href = 'index.html';
+  });
+
+  // Topup buttons
+  document.querySelectorAll('.topup-btn').forEach(btn => {
+    btn.addEventListener('click', () => Credits.showTopupModal());
+  });
+
+  document.getElementById('topup-nav-btn')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    Credits.showTopupModal();
+  });
+});
+</script>
+</body>
+</html>

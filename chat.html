@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StudioAI — Chat</title>
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/chat.css">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="chat-layout">
+
+  <!-- ═══ Chat Sidebar ═══ -->
+  <aside class="chat-sidebar">
+
+    <!-- Header -->
+    <div class="chat-sidebar-header">
+      <div class="chat-back" onclick="window.location.href='dashboard.html'">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+        Dashboard
+      </div>
+      <div class="chat-model-info">
+        <div class="chat-model-icon" id="model-icon">🎮</div>
+        <div>
+          <div class="chat-model-name" id="model-name">Roblox Studio AI</div>
+          <div class="chat-model-sub" id="model-sub">Especialista en Lua</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- New Chat Button -->
+    <div style="padding:10px">
+      <button class="btn btn-secondary btn-full" id="new-chat-btn" style="font-size:13px;justify-content:flex-start;gap:8px">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width:15px;height:15px"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Nueva conversación
+      </button>
+    </div>
+
+    <!-- History -->
+    <div class="chat-history-title">Historial</div>
+    <div class="chat-history" id="chat-history-list"></div>
+
+    <!-- Settings -->
+    <div class="settings-panel">
+      <div class="settings-title">⚙ Configuración API</div>
+      <div class="api-key-field">
+        <input type="password" id="api-key-input" placeholder="sk-ant-api...">
+        <button class="api-save-btn" id="api-save-btn">Guardar</button>
+      </div>
+      <p style="font-size:11px;color:var(--text-3);margin-top:6px;line-height:1.5">
+        Obtén tu clave en
+        <a href="https://console.anthropic.com" target="_blank" style="color:var(--accent)">console.anthropic.com</a>
+      </p>
+    </div>
+
+    <!-- Footer -->
+    <div class="chat-sidebar-footer">
+      <div class="sidebar-credits" style="margin-bottom:8px">
+        <span class="sidebar-credits-label">💰 Créditos</span>
+        <span class="sidebar-credits-val" data-credits-balance>—</span>
+      </div>
+      <div class="user-card">
+        <div class="user-avatar" data-user-avatar>U</div>
+        <div class="user-card-info">
+          <div class="user-card-name" data-user-name>Usuario</div>
+          <div class="user-card-plan">
+            <a href="#" class="topup-btn" style="color:var(--accent);font-size:11px">+ Recargar créditos</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ═══ Main Chat ═══ -->
+  <div class="chat-main">
+
+    <!-- Top bar -->
+    <div class="chat-topbar">
+      <div class="chat-topbar-left">
+        <div style="font-size:20px" id="topbar-icon">🎮</div>
+        <div>
+          <div class="chat-topbar-title" id="chat-title">Roblox Studio AI</div>
+          <div class="chat-topbar-sub">Impulsado por Claude · Anthropic</div>
+        </div>
+      </div>
+      <div class="chat-topbar-actions">
+        <span class="credits-badge">
+          <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M8 9h5a3 3 0 0 1 0 6H8" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg>
+          <span data-credits-balance>—</span>
+        </span>
+        <button class="btn btn-secondary btn-sm topup-btn">Recargar</button>
+      </div>
+    </div>
+
+    <!-- Messages -->
+    <div class="chat-messages" id="messages">
+
+      <!-- Empty state -->
+      <div class="chat-empty" id="empty-state">
+        <div class="chat-empty-icon" id="empty-icon">🎮</div>
+        <h2 id="empty-title">Roblox Studio AI</h2>
+        <p id="empty-desc">
+          Hola! Soy tu asistente especializado en Roblox Studio. Pregúntame sobre Lua, scripts, DataStores, GUIs, sistemas de juego y más.
+        </p>
+
+        <div class="quick-prompts">
+          <button class="quick-prompt" data-prompt="¿Cómo creo un sistema de leaderstats con monedas y nivel del jugador?">
+            <div class="quick-prompt-title">💰 Leaderstats</div>
+            <div class="quick-prompt-sub">Monedas y niveles de jugador</div>
+          </button>
+          <button class="quick-prompt" data-prompt="Explícame cómo usar DataStoreService para guardar datos de jugadores">
+            <div class="quick-prompt-title">💾 DataStore</div>
+            <div class="quick-prompt-sub">Persistencia de datos</div>
+          </button>
+          <button class="quick-prompt" data-prompt="¿Cómo creo un RemoteEvent entre el cliente y el servidor en Roblox?">
+            <div class="quick-prompt-title">🔄 RemoteEvents</div>
+            <div class="quick-prompt-sub">Comunicación cliente-servidor</div>
+          </button>
+          <button class="quick-prompt" data-prompt="Ayúdame a crear una GUI de inventario en Roblox Studio">
+            <div class="quick-prompt-title">🖼️ GUI Inventario</div>
+            <div class="quick-prompt-sub">Interfaz de usuario</div>
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Input area -->
+    <div class="chat-input-area">
+      <div class="input-row">
+        <textarea
+          id="chat-input"
+          class="chat-textarea"
+          placeholder="Pregunta sobre Roblox Studio, Lua, scripts..."
+          rows="1"
+        ></textarea>
+        <button id="send-btn" class="send-btn" disabled>
+          <svg viewBox="0 0 24 24"><path d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z"/></svg>
+        </button>
+      </div>
+      <div class="input-footer">
+        <span class="input-hint">Enter para enviar · Shift+Enter para salto de línea</span>
+        <span class="input-credit-cost" id="credit-cost">3 créditos por mensaje</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="js/app.js"></script>
+<script src="js/credits.js"></script>
+<script src="js/chat.js"></script>
+
+<script>
+// Set topbar icon to match model
+document.addEventListener('DOMContentLoaded', () => {
+  const model = new URLSearchParams(location.search).get('model') || 'roblox-ai';
+  const icons = { 'roblox-ai':'🎮', 'code-ai':'⌨️', 'debug-ai':'🐛', 'general-ai':'🤖' };
+  const titles = { 'roblox-ai':'Roblox Studio AI', 'code-ai':'Code AI', 'debug-ai':'Debug AI', 'general-ai':'General AI' };
+  const descs  = {
+    'roblox-ai': 'Especialista en Roblox Studio, Lua y desarrollo de juegos',
+    'code-ai':   'Asistente de programación multi-lenguaje',
+    'debug-ai':  'Detección y corrección de errores en tu código',
+    'general-ai':'Asistente de propósito general'
+  };
+
+  const icon  = icons[model]  || '🤖';
+  const title = titles[model] || 'AI';
+  const desc  = descs[model]  || '';
+
+  document.getElementById('topbar-icon')?.setAttribute && null;
+  const topbarIcon = document.getElementById('topbar-icon');
+  if (topbarIcon) topbarIcon.textContent = icon;
+
+  const emptyIcon = document.getElementById('empty-icon');
+  if (emptyIcon) emptyIcon.textContent = icon;
+
+  const emptyTitle = document.getElementById('empty-title');
+  if (emptyTitle) emptyTitle.textContent = title;
+
+  const emptyDesc = document.getElementById('empty-desc');
+  if (emptyDesc && model !== 'roblox-ai') emptyDesc.textContent = desc;
+
+  // Update quick prompts for non-roblox models
+  if (model !== 'roblox-ai') {
+    const qp = document.querySelector('.quick-prompts');
+    if (qp) qp.style.display = 'none';
+  }
+
+  // Logout
+  document.getElementById('logout-btn')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    window.SAI.store.remove('sai_user');
+    window.location.href = 'index.html';
+  });
+});
+</script>
+
+</body>
+</html>
