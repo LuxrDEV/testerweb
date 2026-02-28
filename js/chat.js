@@ -207,19 +207,20 @@ Sé conciso, claro y práctico. Proporciona ejemplos de código cuando sea relev
         'anthropic-dangerous-allow-browser': 'true'
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
+        model: 'claude-haiku-4-5-20251001',
         max_tokens: 1500,
         system: systemPrompt,
-        messages: msgs.slice(-20) // Keep last 20 messages for context
+        messages: msgs.slice(-20).map(m => ({ role: m.role, content: String(m.content) }))
       })
     });
 
+    const data = await response.json();
+    console.log('API response:', data);
+
     if (!response.ok) {
-      const err = await response.json().catch(() => ({}));
-      throw new Error(err.error?.message || `HTTP ${response.status}`);
+      throw new Error(data.error?.message || `HTTP ${response.status}`);
     }
 
-    const data = await response.json();
     return data.content?.[0]?.text || 'Sin respuesta.';
   }
 
