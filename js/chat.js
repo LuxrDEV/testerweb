@@ -162,7 +162,7 @@ Sé conciso, claro y práctico. Proporciona ejemplos de código cuando sea relev
     isLoading = true;
 
     try {
-      const apiKey = store.get('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');
+      const apiKey = store.get('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');
 
       let responseText;
 
