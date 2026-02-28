@@ -162,7 +162,7 @@ Sé conciso, claro y práctico. Proporciona ejemplos de código cuando sea relev
     isLoading = true;
 
     try {
-      const apiKey = store.get('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');
+      const apiKey = store.get('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');
 
       let responseText;
 
@@ -203,7 +203,8 @@ Sé conciso, claro y práctico. Proporciona ejemplos de código cuando sea relev
       headers: {
         'Content-Type': 'application/json',
         'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01'
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-allow-browser': 'true'
       },
       body: JSON.stringify({
         model: 'claude-sonnet-4-6',
