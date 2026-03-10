@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Red social - Conecta, comparte y descubre" />
+  <title>Apex — Red Social</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+
+  <!-- Stylesheets (ordered by hierarchy) -->
+  <link rel="stylesheet" href="css/variables.css" />
+  <link rel="stylesheet" href="css/layout.css" />
+  <link rel="stylesheet" href="css/components.css" />
+  <link rel="stylesheet" href="css/responsive.css" />
+
+  <style>
+    /* Inline critical styles & micro-animations */
+    .splash {
+      position: fixed; inset: 0; background: #000;
+      display: flex; align-items: center; justify-content: center;
+      z-index: 9999;
+      animation: splashOut 0.4s ease 1.5s forwards;
+    }
+    .splash__logo { animation: logoIn 0.6s ease; }
+    @keyframes logoIn {
+      from { opacity: 0; transform: scale(0.8); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    @keyframes splashOut {
+      to { opacity: 0; pointer-events: none; }
+    }
+
+    .page-enter { animation: pageIn 0.2s ease; }
+    @keyframes pageIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Post compose textarea auto-grow */
+    #new-post-text {
+      min-height: 80px;
+      max-height: 300px;
+      overflow-y: auto;
+      width: 100%;
+      color: white;
+      font-size: 16px;
+      resize: none;
+      line-height: 1.6;
+      padding-top: 4px;
+    }
+
+    /* Inline avatar color variants */
+    .av-blue { background: #1e3a5f !important; color: #3b82f6 !important; border-color: #1e3a5f !important; }
+    .av-purple { background: #2d1b69 !important; color: #8b5cf6 !important; border-color: #2d1b69 !important; }
+    .av-orange { background: #431407 !important; color: #f97316 !important; border-color: #431407 !important; }
+    .av-red { background: #450a0a !important; color: #ef4444 !important; border-color: #450a0a !important; }
+    .av-green { background: #052e16 !important; color: #22c55e !important; border-color: #052e16 !important; }
+
+    .verified-badge {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 16px; height: 16px; border-radius: 50%;
+      background: var(--accent-blue); color: white; font-size: 9px;
+    }
+
+    /* Hamburger button (mobile) */
+    .topbar-mobile {
+      display: none;
+      position: fixed; top: 0; left: 0; right: 0; height: var(--topbar-height);
+      background: rgba(0,0,0,0.9); backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      z-index: 150;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+    }
+    @media (max-width: 640px) {
+      .topbar-mobile { display: flex; }
+      .main-content { padding-top: var(--topbar-height); }
+    }
+
+    .drawer-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.7); z-index: 180;
+    }
+    .drawer-overlay.open { display: block; }
+
+    .drawer {
+      position: fixed; left: 0; top: 0; bottom: 0;
+      width: 280px; background: var(--bg-secondary);
+      border-right: 1px solid var(--border);
+      z-index: 190;
+      transform: translateX(-100%);
+      transition: transform 0.3s ease;
+      display: flex; flex-direction: column;
+      padding: 24px 0;
+    }
+    .drawer.open { transform: translateX(0); }
+
+    .logo-wordmark {
+      display: flex;
+      flex-direction: column;
+      line-height: 1;
+    }
+    .logo-wordmark__main {
+      font-family: var(--font-display);
+      font-size: 14px;
+      letter-spacing: 4px;
+      color: #fff;
+    }
+    .logo-wordmark__sub {
+      font-family: var(--font-mono);
+      font-size: 8px;
+      letter-spacing: 2px;
+      color: var(--accent-orange);
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ======== SPLASH SCREEN ======== -->
+  <div class="splash">
+    <div class="splash__logo">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="72" height="72">
+        <path d="M50 8 L88 84 L70 84 L50 42 L30 84 L12 84 Z" fill="white"/>
+        <path d="M22 70 Q50 50 78 70 Q62 57 50 54 Q38 57 22 70Z" fill="black"/>
+        <path d="M28 76 Q50 58 72 76 Q58 64 50 61 Q42 64 28 76Z" fill="rgba(255,255,255,0.6)"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- ======== MOBILE TOPBAR ======== -->
+  <header class="topbar-mobile">
+    <button id="hamburger-btn" style="padding:8px;color:#fff;" onclick="openDrawer()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22" stroke-linecap="round">
+        <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+      </svg>
+    </button>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="28" height="28">
+        <path d="M50 8 L88 84 L70 84 L50 42 L30 84 L12 84 Z" fill="white"/>
+        <path d="M22 70 Q50 50 78 70 Q62 57 50 54 Q38 57 22 70Z" fill="black"/>
+        <path d="M28 76 Q50 58 72 76 Q58 64 50 61 Q42 64 28 76Z" fill="rgba(255,255,255,0.6)"/>
+      </svg>
+      <div class="logo-wordmark">
+        <span class="logo-wordmark__main">APEX</span>
+        <span class="logo-wordmark__sub">RED SOCIAL</span>
+      </div>
+    </div>
+    <button onclick="Modal.open('create-post')" style="padding:8px;color:var(--accent-blue);">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="22" height="22" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    </button>
+  </header>
+
+  <!-- ======== MOBILE DRAWER (hamburger menu) ======== -->
+  <div class="drawer-overlay" id="drawer-overlay" onclick="closeDrawer()"></div>
+  <nav class="drawer" id="mobile-drawer">
+    <div class="sidebar__logo">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="36" height="36" class="sidebar__logo-img">
+        <path d="M50 8 L88 84 L70 84 L50 42 L30 84 L12 84 Z" fill="white"/>
+        <path d="M22 70 Q50 50 78 70 Q62 57 50 54 Q38 57 22 70Z" fill="black"/>
+        <path d="M28 76 Q50 58 72 76 Q58 64 50 61 Q42 64 28 76Z" fill="rgba(255,255,255,0.6)"/>
+      </svg>
+      <div class="logo-wordmark">
+        <span class="logo-wordmark__main">APEX</span>
+        <span class="logo-wordmark__sub">RED SOCIAL</span>
+      </div>
+    </div>
+    <!-- Drawer nav items (same as sidebar) -->
+    <ul class="sidebar__nav">
+      <li class="nav-item active" data-page="feed" onclick="closeDrawer()">
+        <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>
+        <span class="nav-label">Inicio</span>
+      </li>
+      <li class="nav-item" data-page="communities" onclick="closeDrawer()">
+        <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
+        <span class="nav-label">Epicentro</span>
+      </li>
+      <li class="nav-item" data-page="explore" onclick="closeDrawer()">
+        <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
+        <span class="nav-label">Explorar</span>
+      </li>
+      <li class="nav-item" data-page="activity" onclick="closeDrawer()">
+        <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/></svg></span>
+        <span class="nav-label">Actividad</span>
+        <span class="nav-badge">8</span>
+      </li>
+      <li class="nav-item" data-page="messages" onclick="closeDrawer()">
+        <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
+        <span class="nav-label">InTax</span>
+      </li>
+      <div class="nav-divider"></div>
+      <li class="nav-item" data-page="profile" onclick="closeDrawer()">
+        <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
+        <span class="nav-label">Mi Perfil</span>
+      </li>
+    </ul>
+    <div class="sidebar__footer">
+      <div class="sidebar__user" id="drawer-user" onclick="Navigation.navigate('profile');closeDrawer()">
+        <div class="sidebar__user-avatar">AH</div>
+        <div class="sidebar__user-info">
+          <div class="sidebar__user-name">Alexis Hernandez</div>
+          <div class="sidebar__user-handle">@alexis</div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ======== APP WRAPPER ======== -->
+  <div class="app-wrapper">
+
+    <!-- ===== SIDEBAR (desktop) ===== -->
+    <aside class="sidebar">
+      <div class="sidebar__logo">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="36" height="36" class="sidebar__logo-img">
+          <path d="M50 8 L88 84 L70 84 L50 42 L30 84 L12 84 Z" fill="white"/>
+          <path d="M22 70 Q50 50 78 70 Q62 57 50 54 Q38 57 22 70Z" fill="black"/>
+          <path d="M28 76 Q50 58 72 76 Q58 64 50 61 Q42 64 28 76Z" fill="rgba(255,255,255,0.6)"/>
+        </svg>
+        <span class="sidebar__logo-text">APEX</span>
+        <span class="sidebar__logo-badge">BETA</span>
+      </div>
+
+      <ul class="sidebar__nav">
+        <li class="nav-item active" data-page="feed">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+              <polyline points="9 22 9 12 15 12 15 22"/>
+            </svg>
+          </span>
+          <span class="nav-label">Inicio</span>
+        </li>
+
+        <li class="nav-item" data-page="communities">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+              <circle cx="9" cy="7" r="4"/>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+          </span>
+          <span class="nav-label">Epicentro</span>
+        </li>
+
+        <li class="nav-item" data-page="explore">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+          </span>
+          <span class="nav-label">Explorar</span>
+        </li>
+
+        <li class="nav-item" data-page="activity">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/>
+            </svg>
+          </span>
+          <span class="nav-label">Actividad</span>
+          <span class="nav-badge">8</span>
+        </li>
+
+        <li class="nav-item" data-page="messages">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            </svg>
+          </span>
+          <span class="nav-label">InTax</span>
+        </li>
+
+        <div class="nav-divider"></div>
+        <div class="nav-section-label">CUENTA</div>
+
+        <li class="nav-item" data-page="profile">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+          </span>
+          <span class="nav-label">Mi Perfil</span>
+        </li>
+
+        <li class="nav-item btn-create-post" style="background:rgba(59,130,246,0.12);color:var(--accent-blue);margin-top:8px;">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+              <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+          </span>
+          <span class="nav-label">Publicar</span>
+        </li>
+      </ul>
+
+      <div class="sidebar__footer">
+        <div class="sidebar__user" id="sidebar-user">
+          <div class="sidebar__user-avatar">AH</div>
+          <div class="sidebar__user-info">
+            <div class="sidebar__user-name">Alexis Hernandez</div>
+            <div class="sidebar__user-handle">@alexis</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <main class="main-content">
+
+      <!-- === CENTER FEED === -->
+      <div class="center-feed">
+
+        <!-- ─── PAGE: FEED ─── -->
+        <section class="page active page-enter" id="page-feed">
+          <div class="page-header">
+            <span class="page-header__title">Para ti</span>
+            <div class="page-header__tabs">
+              <button class="tab-btn active" data-tab-group="feed" data-tab="parati">Para ti</button>
+              <button class="tab-btn" data-tab-group="feed" data-tab="siguiendo">Siguiendo</button>
+            </div>
+          </div>
+
+          <!-- Create post box -->
+          <div class="create-post" data-tab-content="feed" data-tab-panel="parati">
+            <div class="avatar avatar-md av-blue">AH</div>
+            <div class="create-post__input-area">
+              <textarea class="create-post__input" placeholder="¿Qué está pasando?" rows="2" onclick="Modal.open('create-post')"></textarea>
+              <div class="create-post__toolbar">
+                <div class="create-post__tools">
+                  <button class="create-post__tool" onclick="Modal.open('create-post')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="18" height="18"><rect x="2" y="7" width="20" height="15" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+                    Video
+                  </button>
+                  <button class="create-post__tool" onclick="Modal.open('create-post')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="18" height="18"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                    Imagen
+                  </button>
+                  <button class="create-post__tool" onclick="Modal.open('create-post')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="18" height="18"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+                    Encuesta
+                  </button>
+                </div>
+                <button class="btn btn-primary btn-sm btn-create-post">Publicar</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Posts list -->
+          <div id="feed-posts"></div>
+        </section>
+
+        <!-- ─── PAGE: COMMUNITIES ─── -->
+        <section class="page page-enter" id="page-communities">
+          <div class="page-header">
+            <span class="page-header__title">Epicentro</span>
+            <button class="btn btn-outline btn-sm" onclick="Toast.show('Crear comunidad próximamente')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Nueva
+            </button>
+          </div>
+
+          <div class="section-header" style="padding:16px 20px 4px;">MIS COMUNIDADES</div>
+          <div class="community-grid" id="communities-grid"></div>
+
+          <div class="section-header" style="padding:16px 20px 4px;">EXPLORAR</div>
+          <div id="explore-communities-list"></div>
+        </section>
+
+        <!-- ─── PAGE: EXPLORE ─── -->
+        <section class="page page-enter" id="page-explore">
+          <div class="page-header">
+            <div class="search-bar" style="flex:1;">
+              <svg class="search-bar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input type="text" class="search-input" placeholder="Buscar..." />
+            </div>
+          </div>
+
+          <div class="explore-filters">
+            <button class="explore-filter active">Para ti</button>
+            <button class="explore-filter">Posts</button>
+            <button class="explore-filter">Usuarios</button>
+            <button class="explore-filter">Comunidades</button>
+          </div>
+
+          <div class="trend-card" style="margin:16px;border-radius:var(--radius-lg);">
+            <div class="trend-card__header">🔥 Tendencias</div>
+            <div id="explore-trends"></div>
+          </div>
+        </section>
+
+        <!-- ─── PAGE: ACTIVITY ─── -->
+        <section class="page page-enter" id="page-activity">
+          <div class="page-header">
+            <span class="page-header__title">Actividad</span>
+            <button class="btn-ghost" onclick="Toast.show('Mensajes directos')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="20" height="20"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            </button>
+          </div>
+          <div id="activity-list"></div>
+        </section>
+
+        <!-- ─── PAGE: MESSAGES ─── -->
+        <section class="page page-enter" id="page-messages">
+          <div class="messages-header">
+            <span>InTax</span>
+            <span style="font-size:11px;color:var(--text-muted);font-family:var(--font-mono);letter-spacing:2px;">INTERACCION TAXONOMICA</span>
+            <button class="btn-ghost" onclick="Toast.show('Nuevo mensaje')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="20" height="20"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </button>
+          </div>
+          <div class="messages-tabs">
+            <div class="messages-tab active" onclick="switchMsgTab(this,'chats')">Chats</div>
+            <div class="messages-tab" onclick="switchMsgTab(this,'groups')">Grupos</div>
+          </div>
+          <div id="chats-panel">
+            <div style="padding:60px 20px;text-align:center;color:var(--text-muted);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="40" height="40" style="margin:0 auto 12px;opacity:.3;" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              <p>No hay conversaciones aún</p>
+            </div>
+          </div>
+          <div id="groups-panel" style="display:none;">
+            <div id="groups-list"></div>
+          </div>
+        </section>
+
+        <!-- ─── PAGE: PROFILE ─── -->
+        <section class="page page-enter" id="page-profile">
+          <div class="page-header">
+            <button class="btn-ghost" onclick="Navigation.navigate('feed')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="20" height="20"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+            </button>
+            <div>
+              <div id="profile-name" style="font-size:18px;font-weight:700;">Alexis Hernandez</div>
+              <div style="font-size:12px;color:var(--text-muted);">4 posts</div>
+            </div>
+            <button class="btn btn-outline btn-sm" onclick="Toast.show('Ajustes de cuenta')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            </button>
+          </div>
+
+          <div class="profile-banner"></div>
+
+          <div class="profile-info" id="profile-content">
+            <div class="profile-avatar-wrap">
+              <div class="profile-avatar">AH</div>
+              <button class="btn btn-outline btn-sm" onclick="Toast.show('Editar perfil')">Editar perfil</button>
+            </div>
+            <div class="profile-name" id="profile-name-2">Alexis Hernandez</div>
+            <div class="profile-handle">
+              <span id="profile-handle-text">@alexis</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2" width="14" height="14" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            </div>
+            <div class="profile-bio" id="profile-bio-text">Tratando de conseguir el verificado 🔥</div>
+            <div class="profile-meta">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              <span id="profile-join">Se unió en 2026</span>
+            </div>
+            <div class="profile-stats">
+              <div class="profile-stat">
+                <span class="profile-stat__count" id="profile-following">1</span>
+                <span class="profile-stat__label">Siguiendo</span>
+              </div>
+              <div class="profile-stat">
+                <span class="profile-stat__count" id="profile-followers">3</span>
+                <span class="profile-stat__label">Seguidores</span>
+              </div>
+              <div class="profile-stat">
+                <span class="profile-stat__count" id="profile-likes">0</span>
+                <span class="profile-stat__label">Me gusta</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Profile tabs -->
+          <div style="border-bottom:1px solid var(--border);display:flex;">
+            <button class="tab-btn active" style="flex:1;text-align:center;" data-tab-group="profile" data-tab="externo">Externo</button>
+            <button class="tab-btn" style="flex:1;text-align:center;" data-tab-group="profile" data-tab="interno">Interno</button>
+          </div>
+          <div data-tab-content="profile" data-tab-panel="externo" id="profile-posts">
+            <!-- Rendered by JS -->
+            <div class="post-card" style="text-align:center;padding:40px;color:var(--text-muted);">
+              <p>Cargando publicaciones...</p>
+            </div>
+          </div>
+          <div data-tab-content="profile" data-tab-panel="interno" style="display:none;padding:40px;text-align:center;color:var(--text-muted);">
+            No hay contenido interno aún
+          </div>
+        </section>
+
+      </div><!-- /center-feed -->
+
+      <!-- === RIGHT SIDEBAR === -->
+      <aside class="right-sidebar">
+        <div class="search-bar" style="margin-bottom:20px;">
+          <svg class="search-bar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" class="search-input" placeholder="Buscar..." />
+        </div>
+
+        <div class="trend-card">
+          <div class="trend-card__header">🔥 Tendencias</div>
+          <div id="right-trends"></div>
+          <div style="padding:12px 16px;">
+            <button class="btn-ghost" style="font-size:13px;color:var(--accent-blue);width:100%;text-align:left;" onclick="Navigation.navigate('explore')">Ver más →</button>
+          </div>
+        </div>
+
+        <div class="follow-card">
+          <div class="follow-card__header">👥 A quién seguir</div>
+          <div id="right-suggested"></div>
+        </div>
+
+        <div style="padding:16px;font-size:11px;color:var(--text-muted);font-family:var(--font-mono);line-height:1.8;letter-spacing:0.5px;">
+          Términos · Privacidad · Cookies<br/>
+          © 2026 Apex · Red Social
+        </div>
+      </aside>
+
+    </main><!-- /main-content -->
+
+    <!-- ===== BOTTOM NAV (mobile) ===== -->
+    <nav class="bottom-nav">
+      <div class="bottom-nav__item active" data-page="feed">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="22" height="22"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        <div class="bottom-nav__dot"></div>
+      </div>
+      <div class="bottom-nav__item" data-page="communities">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="22" height="22"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      </div>
+      <div class="bottom-nav__plus btn-create-post">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" width="24" height="24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </div>
+      <div class="bottom-nav__item" data-page="activity">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="22" height="22"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      </div>
+      <div class="bottom-nav__item" data-page="explore">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="22" height="22"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </div>
+    </nav>
+
+  </div><!-- /app-wrapper -->
+
+  <!-- ======== MODAL: CREATE POST ======== -->
+  <div class="modal-overlay" id="modal-create-post">
+    <div class="modal">
+      <div class="modal__header">
+        <button class="modal__close" data-close-modal="create-post">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" width="18" height="18"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+        <span class="modal__title">Nueva publicación</span>
+        <button class="btn btn-primary btn-sm" id="submit-post">Publicar</button>
+      </div>
+      <div class="modal__body">
+        <div style="display:flex;gap:12px;">
+          <div class="avatar avatar-md av-blue">AH</div>
+          <div style="flex:1;">
+            <!-- Destination selector -->
+            <div style="margin-bottom:12px;">
+              <button class="btn btn-outline btn-sm" style="gap:6px;border-radius:var(--radius-full);" onclick="Toast.show('Selecciona dónde publicar')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M5.52.359A.5.5 0 0 1 6 0h4a.5.5 0 0 1 .491.408l.977 5.857L13 8l1.532-1.532A1.5 1.5 0 0 1 15.608 6h4.128a1.5 1.5 0 0 1 1.06 2.56L19 10.414l2.048 2.048a1 1 0 0 1-1.414 1.414l-2.243-2.243-1.768 1.768.707.707a.5.5 0 0 1 0 .707l-2.121 2.122a.5.5 0 0 1-.707 0L11.293 14l-1.768 1.768-2.243 2.243a1 1 0 0 1-1.414-1.414L8 14.586 5.56 11.56A1.5 1.5 0 0 1 4.892 6h4.128a1.5 1.5 0 0 1 1.06.44L11.613 7.97l.977-5.857A.5.5 0 0 1 13.073 1.8" opacity=".3"/><path d="M12 5v14M5 12h14" stroke-linecap="round"/></svg>
+                Selecciona dónde publicar
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="12" height="12" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+              </button>
+            </div>
+            <textarea id="new-post-text" placeholder="¿Qué está pasando?" maxlength="280"></textarea>
+            <div style="text-align:right;margin-top:4px;"><span id="char-counter" style="font-size:12px;color:var(--text-muted);font-family:var(--font-mono);">0/280</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="modal__tools">
+        <button class="modal__tool-chip">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><rect x="2" y="7" width="20" height="15" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+          Video
+        </button>
+        <button class="modal__tool-chip">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          Imagen
+        </button>
+        <button class="modal__tool-chip">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+          Encuesta
+        </button>
+        <button class="modal__tool-chip">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+          #hashtag
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======== TOAST ======== -->
+  <div class="toast" id="toast"></div>
+
+  <!-- ======== SCRIPTS (ordered by dependency) ======== -->
+  <script src="js/data.js"></script>
+  <script src="js/navigation.js"></script>
+  <script src="js/feed.js"></script>
+  <script src="js/app.js"></script>
+
+  <script>
+    // Drawer helpers (mobile hamburger)
+    function openDrawer() {
+      document.getElementById('mobile-drawer').classList.add('open');
+      document.getElementById('drawer-overlay').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeDrawer() {
+      document.getElementById('mobile-drawer').classList.remove('open');
+      document.getElementById('drawer-overlay').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    // Messages tab switcher
+    function switchMsgTab(btn, tab) {
+      document.querySelectorAll('.messages-tab').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('chats-panel').style.display = tab === 'chats' ? 'block' : 'none';
+      document.getElementById('groups-panel').style.display = tab === 'groups' ? 'block' : 'none';
+    }
+
+    // Explore filter
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.explore-filter').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.explore-filter').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+        });
+      });
+    });
+  </script>
+
+</body>
+</html>
